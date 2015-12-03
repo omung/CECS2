@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<http>
+		<!-- <http auto-config="true"> -->
+		<access-denied-handler error-page="/403page" />
+		<intercept-url pattern="/user**" access="ROLE_USER" />
+		<form-login login-page='/login' username-parameter="username"
+			password-parameter="password" default-target-url="/Profile"
+			login-processing-url="/j_spring_security_check"
+			authentication-failure-url="/login?authfailed" />
+		<logout logout-success-url="/login?logout" />
+	</http>
+
+	<!-- <mvc:interceptors>  -->
+	<!--         <mvc:interceptor>  -->
+	<!--             <mvc:mapping path="/**/*"/> -->
+	<!--             <bean id="webContentInterceptor" class="org.springframework.web.servlet.mvc.WebContentInterceptor">  -->
+	<!--                 <property name="cacheSeconds" value="0"/>  -->
+	<!--                 <property name="useExpiresHeader" value="true"/>  -->
+	<!--                 <property name="useCacheControlHeader" value="true"/>  -->
+	<!--                 <property name="useCacheControlNoStore" value="true"/>  -->
+	<!--             </bean>  -->
+	<!--         </mvc:interceptor>  -->
+	<!--     </mvc:interceptors> -->
+
+
+	<!-- <authentication-manager> <authentication-provider> <user-service> <user 
+		name="user" password="user@123" authorities="ROLE_ADMIN" /> </user-service> 
+		</authentication-provider> </authentication-manager> -->
+
+	<authentication-manager>
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select username,password, enabled from users where username=?"
+				authorities-by-username-query="select username, userrole from userroles where username =?  " />
+		</authentication-provider>
+	</authentication-manager>
+	<beans:bean id="webSecurityExpressionHandler"
+		class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />
+
+</beans:beans>
